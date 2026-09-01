@@ -250,13 +250,12 @@ fun SegmentEditorItem(
                 )
                 
                 Text("Height: ${segment.height}px", style = MaterialTheme.typography.labelMedium)
-                val hRange = 10f..400f
+                val hRange = 10f..3000f
                 val hSteps = ((hRange.endInclusive - hRange.start) / 10).toInt() - 1
                 Slider(
-                    value = segment.height.toFloat().coerceIn(hRange),
+                    value = segment.height.toFloat().coerceIn(10f, maxHeight),
                     onValueChange = { onUpdate(segment.copy(height = it.toInt())) },
-                    valueRange = hRange,
-                    steps = if (hSteps > 0) hSteps else 0
+                    valueRange = 10f..maxHeight
                 )
 
                 
