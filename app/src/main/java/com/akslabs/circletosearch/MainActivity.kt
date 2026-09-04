@@ -331,7 +331,7 @@ fun SetupScreen(onSettingsClick: () -> Unit, onOcrSettingsClick: () -> Unit) {
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                             Text(
-                                text = "Hold the Home button or edge-swipe up to summon CircleToSearch — like calling your Pokémon.",
+                                text = "Hold the Home button or edge-swipe up to summon CircleToSearch.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                             )
@@ -392,17 +392,17 @@ fun SetupScreen(onSettingsClick: () -> Unit, onOcrSettingsClick: () -> Unit) {
                 modifier = Modifier.clickable(onClick = onOcrSettingsClick),
                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
             )
-            Spacer(modifier = Modifier.height(25.dp))
+//            Spacer(modifier = Modifier.height(25.dp))
+//
+//            // Privacy Note
+//            Text(
+//                text = "That’s it. No more permissions.\n We’re not trying to adopt your phone.",
+//                style = MaterialTheme.typography.bodySmall,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+//                textAlign = TextAlign.Center
+//            )
 
-            // Privacy Note
-            Text(
-                text = "That’s it. No more permissions.\n We’re not trying to adopt your phone.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(22.dp))
 
 
             // 5. Footer
