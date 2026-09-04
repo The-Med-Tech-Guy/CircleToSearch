@@ -1807,8 +1807,12 @@ fun CircleToSearchScreen(
                                 androidx.compose.material3.FilledTonalButton(
                                     onClick = {
                                         if (selectedBitmap != null && selectionRect != null) {
-                                            CircleToSearchAccessibilityService.pinArea(selectedBitmap!!, selectionRect!!)
-                                            (context as? android.app.Activity)?.finish()
+                                            val pinned = CircleToSearchAccessibilityService.pinArea(selectedBitmap!!, selectionRect!!)
+                                            if (pinned) {
+                                                (context as? android.app.Activity)?.finish()
+                                            } else {
+                                                android.widget.Toast.makeText(context, "            Allow accessibility permission to use this feature", android.widget.Toast.LENGTH_LONG).show()
+                                            }
                                         }
                                     },
                                     modifier = Modifier.height(48.dp),

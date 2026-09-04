@@ -1177,9 +1177,11 @@ class CircleToSearchAccessibilityService : AccessibilityService() {
             instance?.performCapture(null)
         }
 
-        fun pinArea(bitmap: Bitmap, rect: android.graphics.Rect) {
+        fun pinArea(bitmap: Bitmap, rect: android.graphics.Rect): Boolean {
             android.util.Log.d("CircleToSearch", "pinArea static called. instance=${instance != null}")
+            if (instance == null) return false
             instance?.showPinnedArea(bitmap, rect)
+            return true
         }
     }
 
