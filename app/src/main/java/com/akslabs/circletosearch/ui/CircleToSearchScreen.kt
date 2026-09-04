@@ -1458,28 +1458,18 @@ fun CircleToSearchScreen(
                             }
 
                             // Circular Button: Assist Copy (Music Icon)
-                            val assistNodes by com.akslabs.circletosearch.data.AssistDataRepository.assistNodes.collectAsState()
-                            val isAssistDataReady by com.akslabs.circletosearch.data.AssistDataRepository.isDataReady.collectAsState()
-
                             IconButton(
                                 onClick = {
                                     haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
-                                    
-                                    if (isAssistDataReady) {
-                                        // Use high-accuracy AssistStructure data + OCR merge
-                                        copyTextManager?.setHybridMode(assistNodes)
-                                        isCopyMode = true
-                                        isCopyTextTriggered = true
-                                    } else {
-                                        // Data not ready (likely bubble trigger)
-                                        android.widget.Toast.makeText(context, "Comming Soon: launch CTS as assistant to try Hybrid text detection.", android.widget.Toast.LENGTH_LONG).show()
-                                    }
+                                    copyTextManager?.setOcrOnlyMode()
+                                    isCopyMode = true
+                                    isCopyTextTriggered = true
                                 },
                                 modifier = Modifier
                                     .size(60.dp)
                                     .background(MaterialTheme.colorScheme.surfaceContainer, CircleShape),
                             ) {
-                                Icon(Icons.Default.MusicNote, contentDescription = "Assist Copy", tint = if (isAssistDataReady) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
+                                Icon(Icons.Default.MusicNote, contentDescription = "Assist Copy", tint = MaterialTheme.colorScheme.onSurface)
                             }
 
                             // Circular Button: Translate
@@ -1556,9 +1546,9 @@ fun CircleToSearchScreen(
                             }
 
                             // More Apps
-                            BottomBarButton("More Apps", { Icon(Icons.Default.Apps, null) }) {
-                                showMoreAppsSheet = true
-                            }
+//                            BottomBarButton("More Apps", { Icon(Icons.Default.Apps, null) }) {
+//                                showMoreAppsSheet = true
+//                            }
 
                             // Pin
                             val isPinEnabled = selectedBitmap != null
@@ -1622,9 +1612,9 @@ fun CircleToSearchScreen(
                             }
 
                             // Donate
-                            BottomBarButton("Donate", { Icon(painterResource(id = com.akslabs.circletosearch.R.drawable.donation), null, modifier = Modifier.size(22.dp)) }) {
-                                showDonateSheet = true
-                            }
+//                            BottomBarButton("Donate", { Icon(painterResource(id = com.akslabs.circletosearch.R.drawable.donation), null, modifier = Modifier.size(22.dp)) }) {
+//                                showDonateSheet = true
+//                            }
 
                             // Copy Text
                             BottomBarButton("Copy Text", { Icon(painterResource(id = com.akslabs.circletosearch.R.drawable.ocr), null, modifier = Modifier.size(20.dp)) }) {

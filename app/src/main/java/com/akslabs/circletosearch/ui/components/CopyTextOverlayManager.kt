@@ -58,32 +58,16 @@ class CopyTextOverlayManager(
     
     // Status message for the user
     private val statusMessage = mutableStateOf<String?>(null)
-    
-    // Assistant Data support
-    var isAssistMode: Boolean = false
-        private set
-    
-    private var nativeNodes: List<TextNode> = emptyList()
 
-    fun setHybridMode(nodes: List<TextNode>) {
-        isAssistMode = true
-        nativeNodes = nodes
-        textNodes.clear()
-        textNodes.addAll(nodes)
-        updateAllWords()
-    }
-    
     fun setOcrOnlyMode() {
-        isAssistMode = false
-        nativeNodes = emptyList()
         textNodes.clear()
         allWords = emptyList()
         statusMessage.value = null
     }
-    
+
     private fun updateAllWords() {
-        allWords = textNodes.flatMap { node -> 
-            node.words.map { word -> 
+        allWords = textNodes.flatMap { node ->
+            node.words.map { word ->
                 word
             }
         }
@@ -124,7 +108,7 @@ class CopyTextOverlayManager(
                                 )
                                 Spacer(Modifier.height(16.dp))
                                 Text(
-                                    if (isAssistMode) "Hybrid Deep Scan..." else "Scanning text...", 
+                                    "Scanning text...",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = ComposeColor.White,
                                     modifier = Modifier
@@ -155,12 +139,7 @@ class CopyTextOverlayManager(
         }
         container.addView(topBar)
 
-        if (isAssistMode) {
-            // Trigger parallel OCR scan even if we have native nodes
-            scanNodes(view, isHybrid = true)
-        } else {
-            scanNodes(view, isHybrid = false)
-        }
+        scanNodes(view)
         return container
     }
 
@@ -262,7 +241,7 @@ class CopyTextOverlayManager(
         dimView?.let { scanNodes(it) }
     }
 
-    private fun scanNodes(view: View, isHybrid: Boolean = false) {
+    private fun scanNodes(view: View) {
         scanJob?.cancel()
         statusMessage.value = null
         scanJob = scope.launch(Dispatchers.Main) {
@@ -270,9 +249,6 @@ class CopyTextOverlayManager(
             val bitmap = screenshotBitmap ?: BitmapRepository.getScreenshot()
             
             if (bitmap == null) {
-                if (isAssistMode && textNodes.isEmpty()) {
-                    statusMessage.value = "This app doesn't allow reading screen content."
-                }
                 isScanning.value = false
                 view.invalidate()
                 return@launch
@@ -282,14 +258,10 @@ class CopyTextOverlayManager(
                 // OCR scan runs on background thread
                 val ocrNodes = TesseractEngine.extractText(context, bitmap)
                 
-                if (isHybrid) {
-                    mergeHybridNodes(ocrNodes)
-                } else {
-                    val sortedNodes = ocrNodes.sortedWith(compareBy({ it.bounds.top }, { it.bounds.left }))
-                    textNodes.clear()
-                    textNodes.addAll(sortedNodes)
-                    updateAllWords()
-                }
+                val sortedNodes = ocrNodes.sortedWith(compareBy({ it.bounds.top }, { it.bounds.left }))
+                textNodes.clear()
+                textNodes.addAll(sortedNodes)
+                updateAllWords()
                 
                 if (textNodes.isEmpty()) {
                     statusMessage.value = "No text found on screen."
@@ -303,47 +275,6 @@ class CopyTextOverlayManager(
                 view.invalidate()
             }
         }
-    }
-
-    private fun mergeHybridNodes(ocrNodes: List<TextNode>) {
-        val newNodes = mutableListOf<TextNode>()
-        // Start with existing native nodes
-        newNodes.addAll(nativeNodes)
-        
-        for (ocr in ocrNodes) {
-            if (!isDuplicate(ocr, nativeNodes)) {
-                // Only add if OCR node is within screen bounds (roughly)
-                if (ocr.bounds.left >= -50 && ocr.bounds.top >= -50) {
-                    newNodes.add(ocr)
-                }
-            }
-        }
-        
-        val sortedNodes = newNodes.sortedWith(compareBy({ it.bounds.top }, { it.bounds.left }))
-        textNodes.clear()
-        textNodes.addAll(sortedNodes)
-        updateAllWords()
-    }
-
-    private fun isDuplicate(ocr: TextNode, natives: List<TextNode>): Boolean {
-        for (native in natives) {
-            // 1. Coordinate Overlap Check (> 50% overlap)
-            val ocrRect = ocr.bounds
-            val nativeRect = native.bounds
-            
-            val intersect = Rect(ocrRect)
-            if (intersect.intersect(nativeRect)) {
-                val intersectArea = intersect.width() * intersect.height()
-                val ocrArea = ocrRect.width() * ocrRect.height()
-                if (intersectArea > ocrArea * 0.5) return true
-            }
-            
-            // 2. Text Similarity Check
-            val ocrT = ocr.fullText.lowercase().trim()
-            val nativeT = native.fullText.lowercase().trim()
-            if (nativeT.contains(ocrT) || ocrT.contains(nativeT)) return true
-        }
-        return false
     }
 
     @SuppressLint("ClickableViewAccessibility")
