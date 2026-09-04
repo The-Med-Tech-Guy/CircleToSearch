@@ -86,7 +86,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
@@ -181,6 +180,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import android.os.Build
 import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.Surface
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1551,17 +1551,17 @@ fun CircleToSearchScreen(
 //                            }
 
                             // Pin
-                            val isPinEnabled = selectedBitmap != null
-                            BottomBarButton(
-                                label = "Pin", 
-                                icon = { Icon(Icons.Default.PushPin, contentDescription = null, modifier = Modifier.size(22.dp)) },
-                                enabled = isPinEnabled
-                            ) {
-                                selectedBitmap?.let { bmp ->
-                                    CircleToSearchAccessibilityService.pinArea(bmp, selectionRect ?: android.graphics.Rect())
-                                    (context as? android.app.Activity)?.finish()
-                                }
-                            }
+//                            val isPinEnabled = selectedBitmap != null
+//                            BottomBarButton(
+//                                label = "Pin",
+//                                icon = { Icon(Icons.Default.PushPin, contentDescription = null, modifier = Modifier.size(22.dp)) },
+//                                enabled = isPinEnabled
+//                            ) {
+//                                selectedBitmap?.let { bmp ->
+//                                    CircleToSearchAccessibilityService.pinArea(bmp, selectionRect ?: android.graphics.Rect())
+//                                    (context as? android.app.Activity)?.finish()
+//                                }
+//                            }
 
                             // Smart Entity Extractor
                             BottomBarButton("SmartScan", { Icon(Icons.Default.Search, null, modifier = Modifier.size(22.dp)) }) {
@@ -1702,10 +1702,10 @@ fun CircleToSearchScreen(
                     Box(
                         modifier = Modifier
                             .offset(
-                                x = (centerX - 125.dp).coerceIn(0.dp, screenWidth - 250.dp),
+                                x = (centerX - 160.dp).coerceIn(0.dp, screenWidth - 320.dp),
                                 y = if (topPx > 200f) (topDp - 72.dp).coerceAtLeast(16.dp) else (bottomDp + 16.dp).coerceAtMost(screenHeight - 80.dp)
                             )
-                            .width(250.dp),
+                            .width(320.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         // Wrapped in Surface to match Bottom Bar tonal environment
@@ -1759,6 +1759,8 @@ fun CircleToSearchScreen(
                                     )
                                 }
 
+
+
                                 // Separator
                                 androidx.compose.material3.VerticalDivider(
                                     modifier = Modifier.height(24.dp).padding(horizontal = 2.dp),
@@ -1789,6 +1791,37 @@ fun CircleToSearchScreen(
                                 ) {
                                     Text(
                                         "Save", 
+                                        style = MaterialTheme.typography.labelLarge.copy(
+                                            fontWeight = androidx.compose.ui.text.font.FontWeight.Normal
+                                        )
+                                    )
+                                }
+
+                                // Separator
+                                androidx.compose.material3.VerticalDivider(
+                                    modifier = Modifier.height(24.dp).padding(horizontal = 2.dp),
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                )
+
+                                // 3. PIN BUTTON
+                                androidx.compose.material3.FilledTonalButton(
+                                    onClick = {
+                                        if (selectedBitmap != null && selectionRect != null) {
+                                            CircleToSearchAccessibilityService.pinArea(selectedBitmap!!, selectionRect!!)
+                                            (context as? android.app.Activity)?.finish()
+                                        }
+                                    },
+                                    modifier = Modifier.height(48.dp),
+                                    shape = CircleShape,
+                                    colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = Color.Transparent,
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    ),
+                                    elevation = null,
+                                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 20.dp)
+                                ) {
+                                    Text(
+                                        "Pin",
                                         style = MaterialTheme.typography.labelLarge.copy(
                                             fontWeight = androidx.compose.ui.text.font.FontWeight.Normal
                                         )
