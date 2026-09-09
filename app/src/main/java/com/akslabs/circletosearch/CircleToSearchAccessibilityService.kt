@@ -133,7 +133,7 @@ class CircleToSearchAccessibilityService : AccessibilityService() {
         if (bubbleView != null) return // Already shown
 
         val params = WindowManager.LayoutParams(
-            100, 100,
+            50, 50,
             WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
